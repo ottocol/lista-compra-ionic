@@ -1,17 +1,11 @@
-# Paso 2 · Interfaz Ionic, acciones pendientes
+# Variante · Pantalla de edición independiente
 
-Referencia: `02-ionic-base`. Rama: `main`.
+Rama: `variante/pantalla-edicion`. Parte de `02-ionic-base`.
 
-Funcionan login, logout, listado, alta y comprado/pendiente. No hay controles de editar ni borrar todavía; el servicio de Supabase conserva sus operaciones.
+Se muestran los mismos botones que en variante/botones. El lápiz hace push a `/lista/:id/editar`; el editor es una página con IonPage. Guardar espera a Supabase y vuelve atrás, sin hacer push a una nueva lista. Cancelar y Atrás descartan el borrador.
 
-- LoginPage utiliza IonInput, IonList, IonItem, IonButton y IonSpinner.
-- ListaPage organiza la pantalla con cabecera, toolbar, contenido y componentes Ionic.
-- NuevoProducto conserva el texto hasta que el alta termina correctamente.
-- Producto usa un IonCheckbox con su etiqueta para marcar y desmarcar.
-- ListaPage contiene directamente el estado y las operaciones, con errores visibles y bloqueo durante las peticiones.
-- La carga se ejecuta en onIonViewWillEnter, no en onMounted.
-- Desaparecen Login.vue y ListaCompra.vue, ya sustituidos por las páginas.
+El editor obtiene el producto por su id del servidor: no depende de que antes se haya abierto la lista. Un acceso directo tiene retorno a /lista mediante replace si no hay pantalla anterior.
 
-Ejercicio: desde aquí, implementar editar y borrar con alguno de los patrones móviles. Las cuatro ramas ofrecen soluciones independientes.
+El borrado mantiene la confirmación. No se incluye el modal.
 
-Prueba común: entrar, crear un producto con nombre largo, marcarlo, desmarcarlo, recargar el navegador y comprobar su persistencia. En un fallo de red, debe aparecer el error y mantenerse el texto del formulario.
+Guion: [CICLO-DE-VIDA.md](CICLO-DE-VIDA.md).

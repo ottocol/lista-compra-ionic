@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router'
 import { getUsuario } from '../servicios/api'
 import LoginPage from '../pages/LoginPage.vue'
 import ListaPage from '../pages/ListaPage.vue'
+import EditarPage from '../pages/EditarPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +10,7 @@ const router = createRouter({
     { path: '/', redirect: '/lista' },
     { path: '/login', component: LoginPage },
     { path: '/lista', component: ListaPage, meta: { requiereSesion: true } },
+    { path: '/lista/:id/editar', component: EditarPage, props: true, meta: { requiereSesion: true } },
     { path: '/:pathMatch(.*)*', redirect: '/lista' },
   ],
 })

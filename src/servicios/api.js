@@ -102,5 +102,18 @@ async function getUsuario() {
     return null
 }
 
-export { login, logout, obtenerProductos, crearProducto, borrarProducto,
+
+async function obtenerProducto(id) {
+  await exigirSesion()
+  const { data, error } = await supabase
+    .from('lista')
+    .select('id, nombre, comprado, usuario')
+    .eq('id', id)
+    .single()
+  if (error) throw new Error('Error al obtener el producto: ' + error.message)
+  if (!data) throw new Error('El producto ya no está disponible.')
+  return data
+}
+
+export { obtenerProducto, login, logout, obtenerProductos, crearProducto, borrarProducto,
          setComprado, setNombre, getUsuario }

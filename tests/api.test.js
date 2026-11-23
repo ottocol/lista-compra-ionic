@@ -54,7 +54,9 @@ test('sesión, CRUD y errores del servicio y de la lista', async () => {
       filas = filas.filter((fila) => fila.id !== id)
       return new Response(null, { status: 204 })
     }
-    return json(filas.filter((fila) => id === null || fila.id === id))
+    const seleccion = filas.filter((fila) => id === null || fila.id === id)
+    const singular = new Headers(opciones.headers).get('accept')?.includes('application/vnd.pgrst.object+json')
+    return json(singular ? seleccion[0] : seleccion)
   }
 
   let api
@@ -88,6 +90,7 @@ test('sesión, CRUD y errores del servicio y de la lista', async () => {
     assert.equal(lista.productos.value[0].comprado, true)
     assert.equal(filas[0].comprado, true)
 
+    assert.equal((await api.obtenerProducto(1)).nombre, 'Café')
     await api.setNombre(1, 'Café descafeinado')
     await lista.cargarProductos()
     assert.equal(lista.productos.value[0].nombre, 'Café descafeinado')
