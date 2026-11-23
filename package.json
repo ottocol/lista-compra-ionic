@@ -1,5 +1,5 @@
 {
-  "name": "lista-compra-vue-supabase",
+  "name": "adi-lista-compra-ionic",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,12 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ionic/vue": "8.8.0",
+    "@ionic/vue-router": "8.8.0",
     "@supabase/supabase-js": "^2.118.0",
-    "vue": "^3.5.44"
+    "ionicons": "8.0.13",
+    "vue": "^3.5.44",
+    "vue-router": "4.6.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
     "vite": "^8.3.4",
     "vite-plugin-vue-devtools": "^8.2.1"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

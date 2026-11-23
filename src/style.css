@@ -1,48 +1,25 @@
 :root {
-  font-family: system-ui, sans-serif;
-  color: #26362d;
-  background: #f4f6f2;
+  --ion-font-family: system-ui, sans-serif;
+  --ion-color-primary: #367b57;
+  --ion-color-primary-rgb: 54, 123, 87;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #306c4d;
+  --ion-color-primary-tint: #4a8868;
+  --ion-background-color: #f4f6f2;
+  --ion-text-color: #26362d;
+  --ion-item-background: #ffffff;
+  --ion-toolbar-background: #ffffff;
 }
 
-* {
-  box-sizing: border-box;
+/* El scroll y las alturas los gestiona IonContent, no body. */
+.contenido {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
 }
-
-body {
-  margin: 0;
-  padding: clamp(2rem, 6vw, 5rem) 1rem;
-}
-
-main {
-  width: min(100%, 720px);
-  margin: 0 auto;
-}
-
-h1 {
-  margin: 0 0 2rem;
-  text-align: center;
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
-  letter-spacing: -0.04em;
-}
-
 
 :focus-visible {
   outline: 3px solid #79b894;
   outline-offset: 3px;
-}
-
-
-
-@media (max-width: 480px) {
-  .campos {
-    flex-direction: column;
-  }
-
-  .campos button {
-    width: 100%;
-  }
-
-  #lista .producto {
-    font-size: 1.2rem;
-  }
 }
