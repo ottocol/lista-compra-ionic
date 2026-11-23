@@ -1,17 +1,16 @@
-# Paso 2 · Interfaz Ionic, acciones pendientes
+# Variante · Botones visibles
 
-Referencia: `02-ionic-base`. Rama: `main`.
+Rama: `variante/botones`. Parte de `02-ionic-base`.
 
-Funcionan login, logout, listado, alta y comprado/pendiente. No hay controles de editar ni borrar todavía; el servicio de Supabase conserva sus operaciones.
+Cada fila muestra un checkbox, un lápiz y una papelera. Los iconos tienen etiquetas accesibles y superficies de al menos 44 px.
 
-- LoginPage utiliza IonInput, IonList, IonItem, IonButton y IonSpinner.
-- ListaPage organiza la pantalla con cabecera, toolbar, contenido y componentes Ionic.
-- NuevoProducto conserva el texto hasta que el alta termina correctamente.
-- Producto usa un IonCheckbox con su etiqueta para marcar y desmarcar.
-- ListaPage contiene directamente el estado y las operaciones, con errores visibles y bloqueo durante las peticiones.
-- La carga se ejecuta en onIonViewWillEnter, no en onMounted.
-- Desaparecen Login.vue y ListaCompra.vue, ya sustituidos por las páginas.
+- Editar abre EditorProducto, un IonModal con un formulario de nombre.
+- Cancelar descarta el borrador. Guardar espera a Supabase antes de cerrar.
+- Si la petición falla, el modal conserva el nombre y muestra el error.
+- Eliminar solicita confirmación mediante IonAlert.
+- Producto emite la intención; ListaPage coordina los overlays y actualiza sus datos.
+- Marcar como comprado sigue siendo una acción independiente.
 
-Ejercicio: desde aquí, implementar editar y borrar con alguno de los patrones móviles. Las cuatro ramas ofrecen soluciones independientes.
+Prueba: editar un nombre, cancelar otro cambio, borrar cancelando primero y confirmando después. Repetir con un nombre largo. La edición y el borrado no deben marcar el checkbox.
 
-Prueba común: entrar, crear un producto con nombre largo, marcarlo, desmarcarlo, recargar el navegador y comprobar su persistencia. En un fallo de red, debe aparecer el error y mantenerse el texto del formulario.
+Comparación: `git diff 02-ionic-base variante/botones -- src`.
