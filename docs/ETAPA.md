@@ -1,18 +1,17 @@
-# Paso 1 · Estructura Ionic
+# Paso 2 · Interfaz Ionic, acciones pendientes
 
-Referencia: `01-ionic-shell`.
+Referencia: `02-ionic-base`. Rama: `main`.
 
-Ya funcionan el login y el CRUD de escritorio. La diferencia está en el contenedor:
+Funcionan login, logout, listado, alta y comprado/pendiente. No hay controles de editar ni borrar todavía; el servicio de Supabase conserva sus operaciones.
 
-1. `main.js` instala IonicVue e importa el CSS estructural y las utilidades.
-2. `App.vue` contiene IonApp e IonRouterOutlet.
-3. El router procede de `@ionic/vue-router`, con rutas `/login` y `/lista`.
-4. LoginPage y ListaPage contienen IonPage, IonHeader, IonToolbar e IonContent.
-5. Cada página todavía envuelve el componente de escritorio correspondiente.
-6. El CSS global deja de dar padding al body: el contenido y el scroll los gestiona IonContent.
+- LoginPage utiliza IonInput, IonList, IonItem, IonButton y IonSpinner.
+- ListaPage organiza la pantalla con cabecera, toolbar, contenido y componentes Ionic.
+- NuevoProducto conserva el texto hasta que el alta termina correctamente.
+- Producto usa un IonCheckbox con su etiqueta para marcar y desmarcar.
+- ListaPage contiene directamente el estado y las operaciones, con errores visibles y bloqueo durante las peticiones.
+- La carga se ejecuta en onIonViewWillEnter, no en onMounted.
+- Desaparecen Login.vue y ListaCompra.vue, ya sustituidos por las páginas.
 
-Los estilos scoped de los componentes originales permanecen a propósito. La sustitución de sus controles se ve en el siguiente paso.
+Ejercicio: desde aquí, implementar editar y borrar con alguno de los patrones móviles. Las cuatro ramas ofrecen soluciones independientes.
 
-Prueba: iniciar sesión, añadir, marcar, editar y eliminar un producto; cerrar sesión y comprobar que Atrás no permite acceder a datos sin sesión.
-
-Compara con `git diff 00-desktop 01-ionic-shell -- src`.
+Prueba común: entrar, crear un producto con nombre largo, marcarlo, desmarcarlo, recargar el navegador y comprobar su persistencia. En un fallo de red, debe aparecer el error y mantenerse el texto del formulario.

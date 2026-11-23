@@ -1,6 +1,6 @@
 # Taller ADI · Lista de la compra con Ionic Vue
 
-Migración gradual del frontend original de Vue + Supabase. JavaScript y Composition API, sin Capacitor: todas las variantes se ejecutan en el navegador.
+Migración gradual del frontend original de Vue + Supabase. JavaScript y Composition API, sin composables propios ni Capacitor: todas las variantes se ejecutan en el navegador.
 
 ## Puesta en marcha
 
@@ -45,6 +45,8 @@ npm ci
 npm run dev
 ```
 
+Esta edición simplifica también el tag `02-ionic-base` y el paso `03-swipe-revelar`. Si conservas la edición anterior, descomprime esta en otra carpeta; sus commits de las soluciones son distintos.
+
 Detén Vite antes de cambiar de referencia y vuelve a arrancarlo después. `npm ci` garantiza las dependencias de la referencia elegida. Para trabajar a partir de un tag: `git switch -c mi-solucion 02-ionic-base`.
 
 ## Cómo comparar los cambios
@@ -57,16 +59,21 @@ git diff variante/botones variante/action-sheet -- src
 git diff variante/botones variante/pantalla-edicion -- src
 ```
 
-Cada referencia incluye `docs/ETAPA.md` con lo que ya funciona y qué observar. La rama de pantalla de edición añade un guion específico del ciclo de vida.
+Cada referencia Ionic incluye `docs/ETAPA.md` con lo que ya funciona y qué observar. La rama de pantalla de edición añade un guion específico del ciclo de vida.
 
 ## Decisiones comunes
 
 - Checkbox visible para comprado/pendiente. Las acciones secundarias no cambian su estado por propagación de un clic.
+- El estado, los manejadores y los hooks están directamente en cada página, sin composables propios.
 - El servicio `src/servicios/api.js` conserva las operaciones de Supabase del original.
 - Login y logout navegan como raíz y reemplazan la entrada actual. La lista y el editor sí forman una pila.
 - Las páginas enrutadas tienen IonPage y se muestran mediante IonRouterOutlet.
 - Los formularios conservan el texto si falla el servidor; los botones se bloquean durante las operaciones.
 - Las tres variantes con modal comparten su diseño de editor. La cuarta permite comparar la navegación con el mismo acceso mediante botones.
+
+## Verificación
+
+`npm test` prueba sesión, alta, marcado, edición, borrado y recuperación de errores con el servicio y el estado de la lista reales, con respuestas HTTP y controles Ionic simulados. No escribe en Supabase. `npm run build` comprueba la compilación de cada variante.
 
 ## Referencias
 

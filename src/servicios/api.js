@@ -28,6 +28,12 @@ async function getSesion() {
   return session
 }
 
+async function exigirSesion() {
+  const session = await getSesion()
+  if (!session) throw new Error('La sesión ha terminado. Vuelve a iniciar sesión.')
+  return session
+}
+
 async function obtenerProductos() {
   if (!await getSesion()) return []
 
@@ -42,8 +48,7 @@ async function obtenerProductos() {
 
 //Crea un producto y devuelve el objeto creado (con su id asignado por la BD)
 async function crearProducto(nombre) {
-  const session = await getSesion()
-  if (!session) return
+  const session = await exigirSesion()
 
   const { data, error } = await supabase
     .from('lista')
@@ -56,7 +61,7 @@ async function crearProducto(nombre) {
 }
 
 async function borrarProducto(id) {
-  if (!await getSesion()) return
+  await exigirSesion()
 
   const { error } = await supabase
     .from('lista')
@@ -67,7 +72,7 @@ async function borrarProducto(id) {
 }
 
 async function setComprado(id, valor) {
-  if (!await getSesion()) return
+  await exigirSesion()
 
   const { error } = await supabase
     .from('lista')
@@ -78,7 +83,7 @@ async function setComprado(id, valor) {
 }
 
 async function setNombre(id, nombre) {
-  if (!await getSesion()) return
+  await exigirSesion()
 
   const { error } = await supabase
     .from('lista')

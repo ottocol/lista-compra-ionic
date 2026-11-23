@@ -1,79 +1,27 @@
 <script setup>
-    import { ref } from 'vue';
+import { IonItem, IonInput, IonButton } from '@ionic/vue'
 
-    const emit = defineEmits(["nuevo_prod"])
-    const nombre = ref("")
+defineProps({ ocupado: Boolean })
+const nombre = defineModel({ type: String, default: '' })
+const emit = defineEmits(['nuevo_prod'])
 
-    function doAnyadir() {
-        const limpio = nombre.value.trim()
-        if (limpio) {
-            emit("nuevo_prod", limpio)
-            nombre.value = ""
-        }
-    }
+function doAnyadir() {
+  const limpio = nombre.value.trim()
+  if (limpio) emit('nuevo_prod', limpio)
+}
 </script>
 
 <template>
-    <form id="form_producto" @submit.prevent="doAnyadir">
-        <label for="nuevo_producto">Nuevo producto</label>
-        <div class="campos">
-            <input
-                id="nuevo_producto"
-                name="nombre"
-                type="text"
-                placeholder="Por ejemplo, café"
-                required
-                v-model="nombre"
-            >
-            <button type="submit">Añadir</button>
-        </div>
-    </form>
-
+  <form @submit.prevent="doAnyadir" class="alta-producto">
+    <IonItem lines="none">
+      <IonInput v-model="nombre" label="Nuevo producto" label-placement="stacked"
+        placeholder="Por ejemplo, café" autocomplete="off" enterkeyhint="done"
+        required :disabled="ocupado" />
+      <IonButton slot="end" type="submit" :disabled="ocupado || !nombre.trim()">Añadir</IonButton>
+    </IonItem>
+  </form>
 </template>
 
 <style scoped>
-form {
-  margin-bottom: 1.5rem;
-}
-
-form label {
-  display: block;
-  margin-bottom: 0.6rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.campos {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.campos input {
-  min-width: 0;
-  flex: 1;
-  padding: 0.9rem 1rem;
-  border: 1px solid #cbd8cc;
-  border-radius: 10px;
-  background: white;
-  color: inherit;
-  font: inherit;
-  font-size: 1.15rem;
-}
-
-.campos button {
-  padding: 0.9rem 1.4rem;
-  border: 0;
-  border-radius: 10px;
-  background: #367b57;
-  color: white;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.campos button:hover {
-  background: #286245;
-}
-
-
+.alta-producto { margin-block: 1rem; }
 </style>
