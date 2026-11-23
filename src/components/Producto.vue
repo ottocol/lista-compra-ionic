@@ -5,7 +5,7 @@ import { IonItemSliding, IonItem, IonCheckbox, IonItemOptions, IonItemOption,
 import { ellipsisVertical, createOutline, trashOutline } from 'ionicons/icons'
 
 const props = defineProps({ producto: { type: Object, required: true }, ocupado: Boolean })
-const emit = defineEmits(['toggle_prod', 'editar_prod', 'borrar_prod', 'acciones_prod'])
+const emit = defineEmits(['toggle_prod', 'editar_prod', 'borrar_prod', 'acciones_prod', 'borrar_gesto'])
 
 function cambiarComprado(event) {
   event.target.checked = props.producto.comprado
@@ -35,11 +35,11 @@ async function accion(evento) {
         </IonButton>
       </IonButtons>
     </IonItem>
-    <IonItemOptions side="end">
+    <IonItemOptions side="end" @ionSwipe="accion('borrar_gesto')">
       <IonItemOption :disabled="ocupado" @click="accion('editar_prod')">
         <IonIcon slot="start" :icon="createOutline" />Editar
       </IonItemOption>
-      <IonItemOption color="danger" :disabled="ocupado" @click="accion('borrar_prod')">
+      <IonItemOption color="danger" expandable :disabled="ocupado" @click="accion('borrar_prod')">
         <IonIcon slot="start" :icon="trashOutline" />Eliminar
       </IonItemOption>
     </IonItemOptions>

@@ -1,14 +1,26 @@
-# Variante · Deslizar para revelar
+# Variante · Swipe y borrado con Deshacer
 
-Rama: `variante/swipe`. Este primer commit queda marcado con `03-swipe-revelar`.
+Rama: `variante/swipe`.
 
-IonItemSliding envuelve cada IonItem. IonItemOptions, en el lado end, contiene Editar y Eliminar. Deslizar revela los botones; todavía NO ejecuta el borrado.
+Esta rama tiene dos commits para comparar:
 
-- Al tocar una opción, la fila se cierra y emite la intención.
-- El editor sigue siendo el modal común.
-- Eliminar solicita confirmación.
-- Se conserva el botón de tres puntos como alternativa visible y accesible al gesto.
+- Tag `03-swipe-revelar`: deslizar solo revela Editar y Eliminar.
+- Punta de la rama: además, un desplazamiento completo elimina visualmente la fila y ofrece Deshacer durante cinco segundos.
 
-Prueba en una pantalla táctil, o con la emulación táctil de las herramientas del navegador. Comprueba que desplazar horizontalmente una fila no marque el checkbox. Compara descubrir la función con conocer ya el gesto.
+La opción roja es expandable. El evento ionSwipe de IonItemOptions inicia la operación completa. Tocar el botón Eliminar continúa usando la confirmación habitual; el gesto completo usa Deshacer.
 
-El siguiente commit de esta misma rama añadirá el desplazamiento completo y Deshacer, sin crear una quinta variante.
+## Cómo funciona Deshacer
+
+1. Se guarda el producto y su posición y se oculta de la lista.
+2. Un IonToast ofrece Deshacer.
+3. Deshacer repone la fila sin enviar DELETE.
+4. Al desaparecer el aviso sin deshacer, se ejecuta DELETE en Supabase.
+5. Si falla, se repone la fila y aparece el error.
+
+El toast no implementa la restauración por sí mismo. Esa lógica está en las funciones de ListaPage. Un nuevo borrado completo finaliza el anterior, y el logout espera al borrado pendiente antes de cerrar la sesión. Durante los cinco segundos puedes seguir usando la lista. Cerrar o recargar el navegador antes de enviar DELETE puede conservar el producto en el servidor: es una consecuencia del borrado diferido que conviene discutir en el taller.
+
+Se mantienen los tres puntos como alternativa visible al gesto.
+
+Prueba: revelar y cancelar; tocar Eliminar y cancelar; completar el gesto y deshacer; completar y esperar; cerrar sesión con un borrado pendiente. Comprueba también el caso de error de red.
+
+`npm test` añade pruebas específicas de Deshacer, confirmación y recuperación ante errores.

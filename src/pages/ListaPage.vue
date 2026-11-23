@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonActionSheet,
-  IonList, IonSpinner, IonText, IonNote, onIonViewWillEnter, useIonRouter, alertController
+  IonList, IonSpinner, IonText, IonNote, onIonViewWillEnter, onIonViewWillLeave, useIonRouter,
+  toastController, alertController
 } from '@ionic/vue'
 import {
   getUsuario, logout, obtenerProductos, crearProducto, setComprado, setNombre, borrarProducto
@@ -98,6 +99,61 @@ async function doBorrar(id) {
     ocupado.value = false
   }
 }
+// Borrado diferido: permite deshacer antes de enviar DELETE.
+const eliminando = ref(false)
+let pendiente = null
+
+function restaurar(operacion) {
+  if (!productos.value.some((p) => p.id === operacion.producto.id)) {
+    productos.value.splice(Math.min(operacion.indice, productos.value.length), 0, operacion.producto)
+  }
+}
+
+async function esperarCierre(operacion) {
+  const { role } = await operacion.aviso.onDidDismiss()
+  try {
+    if (role === 'deshacer') {
+      restaurar(operacion)
+      return true
+    }
+    eliminando.value = true
+    await borrarProducto(operacion.producto.id)
+    return true
+  } catch (e) {
+    restaurar(operacion)
+    error.value = e.message
+    return false
+  } finally {
+    eliminando.value = false
+    if (pendiente === operacion) pendiente = null
+  }
+}
+
+async function finalizarPendiente() {
+  if (!pendiente) return true
+  const operacion = pendiente
+  await operacion.aviso.dismiss(undefined, 'confirmar')
+  return operacion.terminado
+}
+
+async function borrarConDeshacer(producto) {
+  if (eliminando.value) return
+  if (!await finalizarPendiente()) return
+  const indice = productos.value.findIndex((p) => p.id === producto.id)
+  if (indice < 0) return
+  error.value = ''
+  const aviso = await toastController.create({
+    message: 'Producto eliminado',
+    duration: 5000,
+    position: 'bottom',
+    buttons: [{ text: 'Deshacer', role: 'deshacer' }],
+  })
+  const operacion = { producto, indice, aviso, terminado: null }
+  productos.value.splice(indice, 1)
+  pendiente = operacion
+  operacion.terminado = esperarCierre(operacion)
+  await aviso.present()
+}
 
 
 const productoEditado = ref(null)
@@ -151,14 +207,23 @@ function resolverAccion(event) {
   if (accion === 'eliminar') pedirBorrado(producto)
 }
 
+onIonViewWillLeave(() => { void finalizarPendiente() })
+
+async function recargarLista() {
+  await finalizarPendiente()
+  await cargarProductos()
+}
+
 onIonViewWillEnter(async () => {
+  await finalizarPendiente()
   usuario.value = await getUsuario()
   if (usuario.value) await cargarProductos()
   else productos.value = []
 })
 
 async function doLogout() {
-  if (ocupado.value) return
+  if (ocupado.value || eliminando.value) return
+  if (!await finalizarPendiente()) return
   ocupado.value = true
   error.value = ''
   try {
@@ -180,24 +245,24 @@ async function doLogout() {
       <IonToolbar>
         <IonTitle>Lista de la compra</IonTitle>
         <IonButtons slot="end">
-          <IonButton :disabled="ocupado || cargando" @click="doLogout">Salir</IonButton>
+          <IonButton :disabled="ocupado || cargando || eliminando" @click="doLogout">Salir</IonButton>
         </IonButtons>
       </IonToolbar>
     </IonHeader>
     <IonContent class="ion-padding">
       <div class="contenido">
         <p><IonNote>{{ usuario?.email }}</IonNote></p>
-        <NuevoProducto v-model="nuevoNombre" :ocupado="ocupado || cargando" @nuevo_prod="doNuevo" />
+        <NuevoProducto v-model="nuevoNombre" :ocupado="ocupado || cargando || eliminando" @nuevo_prod="doNuevo" />
         <IonText v-if="error" color="danger">
           <p role="alert">{{ error }}</p>
-          <IonButton fill="outline" :disabled="ocupado || cargando" @click="cargarProductos">Recargar lista</IonButton>
+          <IonButton fill="outline" :disabled="ocupado || cargando || eliminando" @click="recargarLista">Recargar lista</IonButton>
         </IonText>
         <p v-if="cargando" role="status"><IonSpinner name="crescent" /> Cargando productos…</p>
-        <p><IonNote>Desliza un producto hacia la izquierda para ver sus acciones.</IonNote></p>
+        <p><IonNote>Desliza para ver las acciones; desliza hasta el final para eliminar con Deshacer.</IonNote></p>
         <IonList v-if="productos.length" inset aria-label="Productos de la compra">
           <Producto v-for="producto in productos" :key="producto.id" :producto="producto"
-            :ocupado="ocupado || cargando" @toggle_prod="doToggle" @acciones_prod="abrirAcciones"
-            @editar_prod="abrirEdicion" @borrar_prod="pedirBorrado" />
+            :ocupado="ocupado || cargando || eliminando" @toggle_prod="doToggle" @acciones_prod="abrirAcciones"
+            @editar_prod="abrirEdicion" @borrar_prod="pedirBorrado" @borrar_gesto="borrarConDeshacer" />
         </IonList>
         <p v-else-if="!cargando && !error">La lista está vacía. Añade tu primer producto.</p>
       </div>
