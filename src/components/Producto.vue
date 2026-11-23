@@ -1,27 +1,55 @@
 <script setup>
-import { IonItem, IonCheckbox } from '@ionic/vue'
+import { ref } from 'vue'
+import { IonItemSliding, IonItem, IonCheckbox, IonItemOptions, IonItemOption,
+  IonButtons, IonButton, IonIcon } from '@ionic/vue'
+import { ellipsisVertical, createOutline, trashOutline } from 'ionicons/icons'
 
 const props = defineProps({ producto: { type: Object, required: true }, ocupado: Boolean })
-const emit = defineEmits(['toggle_prod'])
+const emit = defineEmits(['toggle_prod', 'editar_prod', 'borrar_prod', 'acciones_prod'])
 
 function cambiarComprado(event) {
-  // La vista refleja el último valor confirmado por el servidor.
   event.target.checked = props.producto.comprado
   emit('toggle_prod', props.producto.id)
+}
+
+const deslizable = ref(null)
+
+async function accion(evento) {
+  await deslizable.value?.$el.close()
+  emit(evento, props.producto)
 }
 </script>
 
 <template>
-  <IonItem>
+  <IonItemSliding ref="deslizable" :disabled="ocupado">
+    <IonItem>
     <IonCheckbox :checked="producto.comprado" :disabled="ocupado"
       justify="start" label-placement="end" @ionChange="cambiarComprado">
       <span :class="{ comprado: producto.comprado }">{{ producto.nombre }}</span>
     </IonCheckbox>
-  </IonItem>
+      <!-- Acceso visible alternativo al gesto, también utilizable con teclado. -->
+      <IonButtons slot="end">
+        <IonButton :aria-label="'Acciones de ' + producto.nombre" :disabled="ocupado"
+          @click.stop="accion('acciones_prod')">
+          <IonIcon slot="icon-only" :icon="ellipsisVertical" />
+        </IonButton>
+      </IonButtons>
+    </IonItem>
+    <IonItemOptions side="end">
+      <IonItemOption :disabled="ocupado" @click="accion('editar_prod')">
+        <IonIcon slot="start" :icon="createOutline" />Editar
+      </IonItemOption>
+      <IonItemOption color="danger" :disabled="ocupado" @click="accion('borrar_prod')">
+        <IonIcon slot="start" :icon="trashOutline" />Eliminar
+      </IonItemOption>
+    </IonItemOptions>
+  </IonItemSliding>
 </template>
 
 <style scoped>
-ion-checkbox { width: 100%; min-height: 52px; --size: 24px; }
+ion-checkbox { flex: 1; min-width: 0; min-height: 52px; --size: 24px; }
 ion-checkbox::part(label) { white-space: normal; overflow-wrap: anywhere; }
+ion-buttons { margin-inline-start: 8px; }
+ion-button { min-width: 44px; min-height: 44px; }
 .comprado { color: var(--ion-color-medium); text-decoration: line-through; }
 </style>

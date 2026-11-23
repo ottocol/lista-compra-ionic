@@ -1,17 +1,14 @@
-# Paso 2 · Interfaz Ionic, acciones pendientes
+# Variante · Deslizar para revelar
 
-Referencia: `02-ionic-base`. Rama: `main`.
+Rama: `variante/swipe`. Este primer commit queda marcado con `03-swipe-revelar`.
 
-Funcionan login, logout, listado, alta y comprado/pendiente. No hay controles de editar ni borrar todavía; el servicio de Supabase conserva sus operaciones.
+IonItemSliding envuelve cada IonItem. IonItemOptions, en el lado end, contiene Editar y Eliminar. Deslizar revela los botones; todavía NO ejecuta el borrado.
 
-- LoginPage utiliza IonInput, IonList, IonItem, IonButton y IonSpinner.
-- ListaPage organiza la pantalla con cabecera, toolbar, contenido y componentes Ionic.
-- NuevoProducto conserva el texto hasta que el alta termina correctamente.
-- Producto usa un IonCheckbox con su etiqueta para marcar y desmarcar.
-- ListaPage contiene directamente el estado y las operaciones, con errores visibles y bloqueo durante las peticiones.
-- La carga se ejecuta en onIonViewWillEnter, no en onMounted.
-- Desaparecen Login.vue y ListaCompra.vue, ya sustituidos por las páginas.
+- Al tocar una opción, la fila se cierra y emite la intención.
+- El editor sigue siendo el modal común.
+- Eliminar solicita confirmación.
+- Se conserva el botón de tres puntos como alternativa visible y accesible al gesto.
 
-Ejercicio: desde aquí, implementar editar y borrar con alguno de los patrones móviles. Las cuatro ramas ofrecen soluciones independientes.
+Prueba en una pantalla táctil, o con la emulación táctil de las herramientas del navegador. Comprueba que desplazar horizontalmente una fila no marque el checkbox. Compara descubrir la función con conocer ya el gesto.
 
-Prueba común: entrar, crear un producto con nombre largo, marcarlo, desmarcarlo, recargar el navegador y comprobar su persistencia. En un fallo de red, debe aparecer el error y mantenerse el texto del formulario.
+El siguiente commit de esta misma rama añadirá el desplazamiento completo y Deshacer, sin crear una quinta variante.
